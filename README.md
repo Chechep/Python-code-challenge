@@ -29,7 +29,6 @@ A simple command-line Python app for managing authors, articles, and magazines u
 │ └── run_queries.py # Script to run example queries
 └── README.md # Project documentation
 
-
 ---
 
 ## 🚀 Features
@@ -54,6 +53,7 @@ A simple command-line Python app for managing authors, articles, and magazines u
 git clone git@github.com:Chechep/Python-code-challenge.git
 cd Python-code-challenge
 ```
+
 ### 2. Running test
 
 ```bash
