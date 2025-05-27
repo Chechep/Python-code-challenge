@@ -32,3 +32,18 @@ new_article = author.add_article(magazine, "Tech World Domination")
 print("Added Article:", new_article)
 
 print("Author's Topic Areas:", author.topic_areas())
+
+print("Top Author:", Author.top_author())
+
+print("Magazines with multiple authors:")
+
+for mag in Magazine.with_multiple_authors():
+    print(mag.name)
+
+print("Authors for Magazine ID 1:")
+for author in Author.for_magazine(1):
+    print(author.name)
+
+print("Article counts per magazine:")
+for result in Magazine.article_counts():
+    print(f"{result['magazine'].name}: {result['article_count']}")
