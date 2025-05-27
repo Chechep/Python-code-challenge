@@ -38,3 +38,26 @@ class Author:
 
     def __repr__(self):
         return f"<Author id={self.id} name='{self.name}'>"
+
+    def articles(self):
+        from lib.models.article import Article  # Delayed import to avoid circular dependency
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM articles WHERE author_id = ?", (self.id,))
+        rows = cursor.fetchall()
+        conn.close()
+        return [Article(id=row["id"], title=row["title"], author_id=row["author_id"], magazine_id=row["magazine_id"]) for row in rows]
+
+    def magazines(self):
+        from lib.models.magazine import Magazine
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT DISTINCT m.* FROM magazines m
+            JOIN articles a ON a.magazine_id = m.id
+            WHERE a.author_id = ?
+        """, (self.id,))
+        rows = cursor.fetchall()
+        conn.close()
+        return [Magazine(id=row["id"], name=row["name"], category=row["category"]) for row in rows]
+

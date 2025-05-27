@@ -22,3 +22,13 @@ fetched_article = Article.find_by_id(article.id)
 print("Fetched Article:", fetched_article)
 print("Author:", fetched_article.author())
 print("Magazine:", fetched_article.magazine())
+print("Magazine Articles:", magazine.articles())
+print("Magazine Contributors:", magazine.contributors())
+print("Author Articles:", author.articles())
+print("Author Magazines:", author.magazines())
+
+# Test add_article and topic_areas
+new_article = author.add_article(magazine, "Tech World Domination")
+print("Added Article:", new_article)
+
+print("Author's Topic Areas:", author.topic_areas())

@@ -47,3 +47,17 @@ class Magazine:
 
     def __repr__(self):
         return f"<Magazine id={self.id} name='{self.name}'>"
+    def articles(self):
+        from lib.models.article import Article  # Lazy import to avoid circular import
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM articles WHERE magazine_id = ?", (self.id,))
+        rows = cursor.fetchall()
+        conn.close()
+        return [Article(id=row["id"], title=row["title"], author_id=row["author_id"], magazine_id=row["magazine_id"]) for row in rows]
+
+    def contributors(self):
+        from lib.models.author import Author
+        article_list = self.articles()
+        author_ids = list({article.author_id for article in article_list})
+        return [Author.find_by_id(aid) for aid in author_ids if Author.find_by_id(aid) is not None]
