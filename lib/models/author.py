@@ -123,3 +123,35 @@ def top_author():
     if row:
         return Author(id=row["id"], name=row["name"])
     return None
+@classmethod
+def for_magazine(cls, magazine_id):
+    from lib.db.connection import get_connection
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT DISTINCT au.*
+        FROM authors au
+        JOIN articles a ON au.id = a.author_id
+        WHERE a.magazine_id = ?
+    """, (magazine_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    return [cls(id=row["id"], name=row["name"]) for row in rows]
+@classmethod
+def top_author(cls):
+    from lib.db.connection import get_connection
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT au.*, COUNT(a.id) AS article_count
+        FROM authors au
+        JOIN articles a ON au.id = a.author_id
+        GROUP BY au.id
+        ORDER BY article_count DESC
+        LIMIT 1
+    """)
+    row = cursor.fetchone()
+    conn.close()
+    if row:
+        return cls(id=row["id"], name=row["name"])
+    return None

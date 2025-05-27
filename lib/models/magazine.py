@@ -100,3 +100,48 @@ class Magazine:
         rows = cursor.fetchall()
         conn.close()
         return [Author(id=row["id"], name=row["name"]) for row in rows]
+@classmethod
+def with_multiple_authors(cls):
+    from lib.db.connection import get_connection
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT m.*
+        FROM magazines m
+        JOIN articles a ON m.id = a.magazine_id
+        GROUP BY m.id
+        HAVING COUNT(DISTINCT a.author_id) >= 2
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    return [cls(id=row["id"], name=row["name"], category=row["category"]) for row in rows]
+@classmethod
+def with_multiple_authors(cls):
+    from lib.db.connection import get_connection
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT m.*
+        FROM magazines m
+        JOIN articles a ON m.id = a.magazine_id
+        GROUP BY m.id
+        HAVING COUNT(DISTINCT a.author_id) >= 2
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    return [cls(id=row["id"], name=row["name"], category=row["category"]) for row in rows]
+@classmethod
+def article_counts(cls):
+    from lib.db.connection import get_connection
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT m.*, COUNT(a.id) AS article_count
+        FROM magazines m
+        LEFT JOIN articles a ON m.id = a.magazine_id
+        GROUP BY m.id
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    return [{"magazine": cls(id=row["id"], name=row["name"], category=row["category"]),
+             "article_count": row["article_count"]} for row in rows]
